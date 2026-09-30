@@ -1,0 +1,240 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Organization {
+  id         String      @id @default(uuid())
+  name       String
+  users      User[]
+  categories Category[]
+  products   Product[]
+  warehouses Warehouse[]
+  suppliers Supplier[]
+  sales Sale[]
+  purchaseOrders PurchaseOrder[]
+  createdAt  DateTime    @default(now())
+}
+
+model User {
+  id             String       @id @default(uuid())
+  email          String       @unique
+  password       String
+  name           String?
+  role           Role         @default(STAFF)
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  movements StockMovement[]
+  createdAt DateTime        @default(now())
+}
+
+model Category {
+  id             String       @id @default(uuid())
+  name           String
+  description    String?
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  products       Product[]
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@unique([name, organizationId]) // Prevents duplicate categories in the same org
+}
+
+model Product {
+  id           String          @id @default(uuid())
+  name         String
+  sku          String
+  barcode      String?
+  cost         Float           @default(0)
+  sellingPrice Float           @default(0)
+  reorderLevel Int             @default(0)
+  unit         String          @default("PCS") // e.g., PCS, KG, BOX
+  trackExpiry  Boolean         @default(false)
+  isArchived   Boolean         @default(false)
+  inventory    Inventory[]
+  movements    StockMovement[]
+  suppliers Supplier[]
+  saleItems SaleItem[]
+  purchaseOrderItems PurchaseOrderItem[]
+
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Enforce unique SKU and Barcode per organization
+  @@unique([sku, organizationId])
+  @@unique([barcode, organizationId])
+}
+
+// Don't forget to add the inverse relation in the Category model:
+// products Product[]
+
+model Warehouse {
+  id         String  @id @default(uuid())
+  name       String
+  location   String?
+  isArchived Boolean @default(false)
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  inventory Inventory[]
+  movements StockMovement[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([name, organizationId])
+}
+
+model Inventory {
+  id       String @id @default(uuid())
+  quantity Float  @default(0)
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+
+  warehouseId String
+  warehouse   Warehouse @relation(fields: [warehouseId], references: [id])
+
+  updatedAt DateTime @updatedAt
+
+  // A product can only have one inventory record per warehouse
+  @@unique([productId, warehouseId])
+}
+
+model StockMovement {
+  id        String       @id @default(uuid())
+  type      MovementType // IN, OUT, ADJUST, TRANSFER
+  quantity  Float // Positive for IN, Negative for OUT
+  previousQuantity Float        // Stock before movement (e.g., 50)
+  newQuantity      Float        // Stock after movement (e.g., 70)
+  reference String? // e.g., "PO-1002", "Sale-405"
+  reason    String?
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+
+  warehouseId String
+  warehouse   Warehouse @relation(fields: [warehouseId], references: [id])
+
+  userId String // Who made the change
+  user   User   @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+model Supplier {
+  id             String       @id @default(uuid())
+  name           String
+  contactName    String?
+  email          String?
+  phone          String?
+  address        String?
+  isArchived     Boolean      @default(false)
+  
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  
+  products       Product[]    // Implicit many-to-many relation
+  purchaseOrders PurchaseOrder[]
+  
+  // purchaseOrders PurchaseOrder[] // Will be added in Phase 28
+  
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
+
+model PurchaseOrder {
+  id             String              @id @default(uuid())
+  status         POStatus            @default(DRAFT)
+  totalAmount    Float               @default(0)
+  
+  supplierId     String
+  supplier       Supplier            @relation(fields: [supplierId], references: [id])
+  
+  organizationId String
+  organization   Organization        @relation(fields: [organizationId], references: [id])
+  
+  items          PurchaseOrderItem[]
+  
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+}
+
+model PurchaseOrderItem {
+  id        String        @id @default(uuid())
+  quantity  Float
+  unitPrice Float
+  
+  poId      String
+  po        PurchaseOrder @relation(fields: [poId], references: [id])
+  
+  productId String
+  product   Product       @relation(fields: [productId], references: [id])
+}
+
+model Sale {
+  id             String     @id @default(uuid())
+  status         SaleStatus @default(COMPLETED)
+  totalAmount    Float      @default(0)
+  
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  
+  items          SaleItem[]
+  
+  createdAt      DateTime   @default(now())
+}
+
+model SaleItem {
+  id        String  @id @default(uuid())
+  quantity  Float
+  unitPrice Float
+  
+  saleId    String
+  sale      Sale    @relation(fields: [saleId], references: [id])
+  
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+}
+
+
+enum MovementType {
+  IN
+  OUT
+  ADJUST
+  TRANSFER
+}
+
+enum Role {
+  OWNER
+  ADMIN
+  MANAGER
+  STAFF
+  VIEWER
+}
+
+enum POStatus {
+  DRAFT
+  SUBMITTED
+  APPROVED
+  RECEIVED
+  CANCELLED
+}
+
+enum SaleStatus {
+  COMPLETED
+  CANCELLED
+}
