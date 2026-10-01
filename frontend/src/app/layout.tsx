@@ -27,3 +27,71 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     </html>
   );
 }
+
+
+
+
+
+
+// import './globals.css';
+// import Link from 'next/link';
+
+// export default function RootLayout({ children }: { children: React.ReactNode }) {
+//   return (
+//     <html lang="en">
+//       <body className="flex h-screen bg-brand-champagne/20">
+//         {/* Sidebar Navigation */}
+//         <aside className="w-64 bg-brand-emerald flex flex-col text-brand-champagne">
+//           <div className="p-6 text-2xl font-bold border-b border-brand-champagne/10">
+//             StockWise
+//           </div>
+//           <nav className="flex-1 overflow-y-auto p-4 space-y-2">
+//             <NavItem href="/dashboard" label="Dashboard" />
+//             <NavItem href="/inventory" label="Inventory" />
+//             <NavItem href="/products" label="Products" />
+//             <NavItem href="/categories" label="Categories" />
+//             <NavItem href="/warehouses" label="Warehouses" />
+//             <NavItem href="/sales" label="Sales" />
+//             <NavItem href="/purchase-orders" label="Purchases" />
+//             <NavItem href="/suppliers" label="Suppliers" />
+//             <NavItem href="/expiry" label="Expiry Tracking" />
+//             <NavItem href="/analytics" label="Analytics" />
+//             <NavItem href="/ai-assistant" label="AI Assistant" />
+//           </nav>
+//           <div className="p-4 border-t border-brand-champagne/10">
+//             <NavItem href="/settings" label="Settings" />
+//           </div>
+//         </aside>
+
+//         {/* Main Content Area */}
+//         <main className="flex-1 flex flex-col overflow-hidden">
+//           <header className="h-16 bg-white border-b border-brand-emerald/10 flex items-center justify-between px-8 shadow-sm">
+//             <div className="text-brand-emerald font-medium">Organization Name</div>
+//             <div className="flex items-center gap-4">
+//               <Link href="/notifications" className="text-gray-500 hover:text-brand-emerald">
+//                 🔔 Notifications
+//               </Link>
+//               <div className="w-8 h-8 rounded-full bg-brand-emerald text-white flex items-center justify-center font-bold">
+//                 U
+//               </div>
+//             </div>
+//           </header>
+//           <div className="flex-1 overflow-y-auto p-8">
+//             {children}
+//           </div>
+//         </main>
+//       </body>
+//     </html>
+//   );
+// }
+
+// function NavItem({ href, label }: { href: string; label: string }) {
+//   return (
+//     <Link 
+//       href={href} 
+//       className="block px-4 py-2 rounded-lg text-brand-champagne/80 hover:bg-brand-champagne/10 hover:text-white transition-colors"
+//     >
+//       {label}
+//     </Link>
+//   );
+// }

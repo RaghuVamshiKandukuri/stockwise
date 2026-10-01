@@ -1,59 +1,54 @@
 import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
-// import { PrismaService } from '../prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class ProductsService {
-    // constructor(private prisma: PrismaService) {}
+    constructor(private prisma: PrismaService) { }
 
     async create(orgId: string, data: any) {
-        /*
-        // Check for duplicate SKU
+        // Check for duplicate SKU within the same organization
         const existing = await this.prisma.product.findFirst({
-          where: { sku: data.sku, organizationId: orgId }
+            where: { sku: data.sku, organizationId: orgId }
         });
-        if (existing) throw new ConflictException('SKU already exists');
-    
+
+        if (existing) {
+            throw new ConflictException('SKU already exists in this organization');
+        }
+
         return this.prisma.product.create({
-          data: { ...data, organizationId: orgId },
+            data: { ...data, organizationId: orgId },
         });
-        */
     }
 
     async findAll(orgId: string, query: { search?: string; categoryId?: string; showArchived?: boolean }) {
-        /*
         return this.prisma.product.findMany({
-          where: {
-            organizationId: orgId,
-            isArchived: query.showArchived ? undefined : false,
-            categoryId: query.categoryId || undefined,
-            OR: query.search ? [
-              { name: { contains: query.search, mode: 'insensitive' } },
-              { sku: { contains: query.search, mode: 'insensitive' } },
-              { barcode: { contains: query.search, mode: 'insensitive' } },
-            ] : undefined,
-          },
-          include: { category: { select: { name: true } } },
-          orderBy: { name: 'asc' },
+            where: {
+                organizationId: orgId,
+                isArchived: query.showArchived ? undefined : false,
+                categoryId: query.categoryId || undefined,
+                OR: query.search ? [
+                    { name: { contains: query.search, mode: 'insensitive' } },
+                    { sku: { contains: query.search, mode: 'insensitive' } },
+                    { barcode: { contains: query.search, mode: 'insensitive' } },
+                ] : undefined,
+            },
+            include: { category: { select: { name: true } } },
+            orderBy: { name: 'asc' },
         });
-        */
     }
 
     async update(orgId: string, id: string, data: any) {
-        /*
         return this.prisma.product.update({
-          where: { id, organizationId: orgId },
-          data,
+            where: { id, organizationId: orgId },
+            data,
         });
-        */
     }
 
     async archive(orgId: string, id: string) {
-        /*
         // Soft delete by setting isArchived to true
         return this.prisma.product.update({
-          where: { id, organizationId: orgId },
-          data: { isArchived: true },
+            where: { id, organizationId: orgId },
+            data: { isArchived: true },
         });
-        */
     }
 }

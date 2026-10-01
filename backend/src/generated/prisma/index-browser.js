@@ -188,6 +188,7 @@ exports.Prisma.StockMovementScalarFieldEnum = {
   newQuantity: 'newQuantity',
   reference: 'reference',
   reason: 'reason',
+  batchId: 'batchId',
   productId: 'productId',
   warehouseId: 'warehouseId',
   userId: 'userId',
@@ -241,9 +242,46 @@ exports.Prisma.SaleItemScalarFieldEnum = {
   productId: 'productId'
 };
 
+exports.Prisma.ProductBatchScalarFieldEnum = {
+  id: 'id',
+  batchNumber: 'batchNumber',
+  expiryDate: 'expiryDate',
+  quantity: 'quantity',
+  productId: 'productId',
+  warehouseId: 'warehouseId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AuditLogScalarFieldEnum = {
+  id: 'id',
+  action: 'action',
+  entityId: 'entityId',
+  details: 'details',
+  userId: 'userId',
+  organizationId: 'organizationId',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.NotificationScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  message: 'message',
+  type: 'type',
+  isRead: 'isRead',
+  userId: 'userId',
+  organizationId: 'organizationId',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
+};
+
+exports.Prisma.NullableJsonNullValueInput = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull
 };
 
 exports.Prisma.QueryMode = {
@@ -254,6 +292,12 @@ exports.Prisma.QueryMode = {
 exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
+};
+
+exports.Prisma.JsonNullValueFilter = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull,
+  AnyNull: Prisma.AnyNull
 };
 exports.Role = exports.$Enums.Role = {
   OWNER: 'OWNER',
@@ -267,7 +311,10 @@ exports.MovementType = exports.$Enums.MovementType = {
   IN: 'IN',
   OUT: 'OUT',
   ADJUST: 'ADJUST',
-  TRANSFER: 'TRANSFER'
+  TRANSFER: 'TRANSFER',
+  RETURN: 'RETURN',
+  DAMAGE: 'DAMAGE',
+  EXPIRY: 'EXPIRY'
 };
 
 exports.POStatus = exports.$Enums.POStatus = {
@@ -283,6 +330,13 @@ exports.SaleStatus = exports.$Enums.SaleStatus = {
   CANCELLED: 'CANCELLED'
 };
 
+exports.NotificationType = exports.$Enums.NotificationType = {
+  LOW_STOCK: 'LOW_STOCK',
+  EXPIRY: 'EXPIRY',
+  PO_UPDATE: 'PO_UPDATE',
+  SYSTEM: 'SYSTEM'
+};
+
 exports.Prisma.ModelName = {
   Organization: 'Organization',
   User: 'User',
@@ -295,7 +349,10 @@ exports.Prisma.ModelName = {
   PurchaseOrder: 'PurchaseOrder',
   PurchaseOrderItem: 'PurchaseOrderItem',
   Sale: 'Sale',
-  SaleItem: 'SaleItem'
+  SaleItem: 'SaleItem',
+  ProductBatch: 'ProductBatch',
+  AuditLog: 'AuditLog',
+  Notification: 'Notification'
 };
 
 /**

@@ -1,16 +1,18 @@
 import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
 
-@Controller('health')
+@Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
+  @Get('health')
+  getHealth() {
+    return this.appService.getHealthStatus();
+  }
+  
+  // Optional: Also map the absolute root '/' to the health check
   @Get()
-  checkHealth() {
-    return {
-      status: 'ok',
-      timestamp: new Date().toISOString(),
-      service: 'StockWise API'
-    };
+  getRoot() {
+    return this.appService.getHealthStatus();
   }
 }
